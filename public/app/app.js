@@ -1,6 +1,6 @@
 var FoorumApp = angular.module('FoorumApp', ['ngRoute']);
 
-FoorumApp.config(function($routeProvider){
+FoorumApp.config(function ($routeProvider) {
   $routeProvider
     .when('/', {
       controller: 'TopicsListController',
@@ -27,11 +27,11 @@ FoorumApp.config(function($routeProvider){
     });
 });
 
-FoorumApp.run(function($rootScope, $location, Api){
-  $rootScope.logOut = function(){
-    Api.logout().success(function(){
+FoorumApp.run(function ($rootScope, $location, Api) {
+  $rootScope.logOut = function () {
+    Api.logout().success(function () {
       $location.path('/login');
       $rootScope.userLoggedIn = null;
     });
-  }
+  };
 });

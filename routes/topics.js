@@ -7,20 +7,20 @@ var Models = require('../models');
 // Huom! Kaikki polut alkavat polulla /topics
 
 // GET /topics
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     // Hae kaikki aihealueet tässä (Vinkki: findAll)
     res.send(200);
 });
 
 // GET /topics/:id
-router.get('/:id', function(req, res, next) {
+router.get('/:id', function (req, res, next) {
   // Hae aihealue tällä id:llä tässä (Vinkki: findOne)
   var topicId = req.params.id;
   res.send(200);
 });
 
 // POST /topics
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
   // Lisää tämä aihealue
   var topicToAdd = req.body;
   // Palauta vastauksena lisätty aihealue
@@ -28,7 +28,7 @@ router.post('/', function(req, res, next) {
 });
 
 // POST /topics/:id/message
-router.post('/:id/message', function(req, res, next) {
+router.post('/:id/message', function (req, res, next) {
   // Lisää tällä id:llä varustettuun aihealueeseen...
   var topicId = req.params.id;
   // ...tämä viesti (Vinkki: lisää ensin messageToAdd-objektiin kenttä TopicId, jonka arvo on topicId-muuttujan arvo ja käytä sen jälkeen create-funktiota)
