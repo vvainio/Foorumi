@@ -7,17 +7,41 @@ var Models = require('../models');
 
 // POST /users
 router.post('/', function (req, res, next) {
-  // Lisää tämä käyttäjä (Vinkki: create), muista kuitenkin sitä ennen varmistaa, että käyttäjänimi ei ole jo käytössä! (Vinkki: findOne)
-  var userToAdd = req.body;
-  // Palauta vastauksena lisätty käyttäjä
-  res.send(200);
+  var queryParams = getUserModel(req);
+  var userQuery = { where: { username: queryParams.username } };
+
+  if (!queryParams.username || !queryParams.password) {
+    return res.sendStatus(400);
+  }
+
+  Models.User.findOne(userQuery).then(function (user) {
+    if (!user) {
+      Models.User.create(queryParams).then(function (user) {
+        req.session.userId = user.id;
+        res.send(user);
+      });
+    } else {
+      res.status(400).json({ error: 'Käyttäjätunnus on jo käytössä!' });
+    }
+  });
 });
 
 // POST /users/authenticate
 router.post('/authenticate', function (req, res, next) {
-  // Tarkista käyttäjän kirjautuminen tässä. Tee se katsomalla, löytyykö käyttäjää annetulla käyttäjätunnuksella ja salasanalla (Vinkki: findOne ja sopiva where)
-  var userToCheck = req.body;
-  res.send(200);
+  var queryParams = getUserModel(req);
+
+  if (!queryParams.username || !queryParams.password) {
+    return res.sendStatus(403);
+  }
+
+  Models.User.findOne({ where: queryParams }).then(function (user) {
+    if (user) {
+      req.session.userId = user.id;
+      res.send(user);
+    } else {
+      res.sendStatus(403);
+    }
+  });
 });
 
 // GET /users/logged-in
@@ -27,17 +51,26 @@ router.get('/logged-in', function (req, res, next) {
   if (loggedInId === null) {
     res.json({});
   } else {
-    // Hae käyttäjä loggedInId-muuttujan arvon perusteella (Vinkki: findOne)
-  }
+    var query = { where: { id: loggedInId } };
 
-  res.send(200);
+    Models.User.findOne(query).then(function (user) {
+      res.send(user);
+    });
+  }
 });
 
 // GET /users/logout
 router.get('/logout', function (req, res, next) {
   req.session.userId = null;
 
-  res.send(200);
+  res.sendStatus(200);
 });
+
+function getUserModel(req) {
+  return {
+    username: req.body.username,
+    password: req.body.password
+  };
+}
 
 module.exports = router;

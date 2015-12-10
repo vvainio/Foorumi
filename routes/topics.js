@@ -17,7 +17,12 @@ router.get('/', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
   var query = {
     where: { id: req.params.id },
-    include: [ { model: Models.Message } ]
+    include: {
+      model: Models.Message,
+      include: {
+        model: Models.User
+      }
+    }
   };
 
   Models.Topic.findOne(query).then(function (topic) {
@@ -26,7 +31,7 @@ router.get('/:id', function (req, res, next) {
 });
 
 // POST /topics
-router.post('/', function (req, res, next) {
+router.post('/', authentication, function (req, res, next) {
   var topic = getTopicModel(req);
 
   Models.Topic.create(topic).then(function (topic) {
@@ -35,7 +40,7 @@ router.post('/', function (req, res, next) {
 });
 
 // POST /topics/:id/message
-router.post('/:id/message', function (req, res, next) {
+router.post('/:id/message', authentication, function (req, res, next) {
   var query = { where: { id: req.params.id } };
 
   Models.Topic.findOne(query).then(function (topic) {
@@ -58,6 +63,7 @@ function getTopicModel(req) {
 function getMessageModel(topic, req) {
   return {
     TopicId: topic.id,
+    UserId: req.session.userId,
     title: req.body.title,
     content: req.body.content
   };
