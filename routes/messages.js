@@ -8,19 +8,34 @@ var Models = require('../models');
 
 // GET /messages/:id
 router.get('/:id', function (req, res, next) {
-  // Hae viesti tällä id:llä ja siihen liittyvät vastaukset tässä (Vinkki: findOne ja sopiva include)
-  var messageId = req.params.id;
-  res.send(200);
+  var query = {
+    where: { id: req.params.id },
+    include: [ { model: Models.Reply } ]
+  };
+
+  Models.Message.findOne(query).then(function (message) {
+    res.send(message);
+  });
 });
 
 // POST /messages/:id/reply
 router.post('/:id/reply', function (req, res, next) {
-  // Lisää tällä id:llä varustettuun viestiin...
-  var messageId = req.params.id;
-  // ...tämä vastaus (Vinkki: lisää ensin replyToAdd-objektiin kenttä MessageId, jonka arvo on messageId-muuttujan arvo ja käytä sen jälkeen create-funktiota)
-  var replyToAdd = req.body;
-  // Palauta vastauksena lisätty vastaus
-  res.send(200);
+  var query = { where: { id: req.params.id } };
+
+  Models.Message.findOne(query).then(function (message) {
+    var reply = getReplyModel(message, req);
+
+    Models.Reply.create(reply).then(function (reply) {
+      res.send(reply);
+    });
+  });
 });
+
+function getReplyModel(message, req) {
+  return {
+    MessageId: message.id,
+    content: req.body.content
+  };
+}
 
 module.exports = router;

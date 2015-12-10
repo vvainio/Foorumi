@@ -15,7 +15,10 @@ router.get('/', function (req, res, next) {
 
 // GET /topics/:id
 router.get('/:id', function (req, res, next) {
-  var query = { where: { id: req.params.id } };
+  var query = {
+    where: { id: req.params.id },
+    include: [ { model: Models.Message } ]
+  };
 
   Models.Topic.findOne(query).then(function (topic) {
     res.send(topic);
@@ -33,12 +36,15 @@ router.post('/', function (req, res, next) {
 
 // POST /topics/:id/message
 router.post('/:id/message', function (req, res, next) {
-  // Lisää tällä id:llä varustettuun aihealueeseen...
-  var topicId = req.params.id;
-  // ...tämä viesti (Vinkki: lisää ensin messageToAdd-objektiin kenttä TopicId, jonka arvo on topicId-muuttujan arvo ja käytä sen jälkeen create-funktiota)
-  var messageToAdd = req.body;
-  // Palauta vastauksena lisätty viesti
-  res.send(200);
+  var query = { where: { id: req.params.id } };
+
+  Models.Topic.findOne(query).then(function (topic) {
+    var message = getMessageModel(topic, req);
+
+    Models.Message.create(message).then(function (message) {
+      res.send(message);
+    });
+  });
 });
 
 function getTopicModel(req) {
@@ -46,6 +52,14 @@ function getTopicModel(req) {
     id: req.params.id,
     name: req.body.name,
     description: req.body.description
+  };
+}
+
+function getMessageModel(topic, req) {
+  return {
+    TopicId: topic.id,
+    title: req.body.title,
+    content: req.body.content
   };
 }
 
