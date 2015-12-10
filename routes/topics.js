@@ -8,23 +8,27 @@ var Models = require('../models');
 
 // GET /topics
 router.get('/', function (req, res, next) {
-    // Hae kaikki aihealueet tässä (Vinkki: findAll)
-    res.send(200);
+  Models.Topic.findAll().then(function (topics) {
+    res.send(topics);
+  });
 });
 
 // GET /topics/:id
 router.get('/:id', function (req, res, next) {
-  // Hae aihealue tällä id:llä tässä (Vinkki: findOne)
-  var topicId = req.params.id;
-  res.send(200);
+  var query = { where: { id: req.params.id } };
+
+  Models.Topic.findOne(query).then(function (topic) {
+    res.send(topic);
+  });
 });
 
 // POST /topics
 router.post('/', function (req, res, next) {
-  // Lisää tämä aihealue
-  var topicToAdd = req.body;
-  // Palauta vastauksena lisätty aihealue
-  res.send(200);
+  var topic = getTopicModel(req);
+
+  Models.Topic.create(topic).then(function (topic) {
+    res.send(topic);
+  });
 });
 
 // POST /topics/:id/message
@@ -36,5 +40,13 @@ router.post('/:id/message', function (req, res, next) {
   // Palauta vastauksena lisätty viesti
   res.send(200);
 });
+
+function getTopicModel(req) {
+  return {
+    id: req.params.id,
+    name: req.body.name,
+    description: req.body.description
+  };
+}
 
 module.exports = router;
