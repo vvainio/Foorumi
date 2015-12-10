@@ -6,21 +6,27 @@
   {{topic.description}}
 </p>
 
-<h2>1 viesti</h2>
+<h2>
+  <ng-pluralize count="topic.Messages.length"
+                when="{'0': 'Ei viestejä',
+                       'one': '1 viesti',
+                       'other': '{} viestiä'}">
+  </ng-pluralize>
+</h2>
 
 <ul class="media-list">
-  <li class="media">
+  <li class="media" ng-repeat="message in topic.Messages">
     <div class="media-body">
       <h4 class="media-heading">
-        <a href="#/messages/1">Viestin otsikko</a>
+        <a ng-href="#/messages/{{message.id}}">{{message.title}}</a>
       </h4>
 
       <p>
-        Viestin sisältö
+        {{message.content}}
       </p>
 
       <p class="text-muted">
-        Käyttäjätunnus tähän, 1.1.2015 12:00
+        Käyttäjätunnus tähän, {{message.createdAt | date: 'MM.dd.yyyy HH:mm' }}
       </p>
     </div>
   </li>
@@ -28,16 +34,16 @@
 
 <h2>Lisää oma viestisi</h2>
 
-<form>
+<form name="messageForm">
   <div class="form-group">
     <label>Otsikko</label>
-    <input type="text" class="form-control">
+    <input type="text" name="title" class="form-control" ng-model="newMessage.title" required>
   </div>
 
   <div class="form-group">
     <label>Viesti</label>
-    <textarea class="form-control"></textarea>
+    <textarea name="content" class="form-control" ng-model="newMessage.content" required></textarea>
   </div>
 
-  <button class="btn btn-success">Lisää viesti</button>
+  <button class="btn btn-success" ng-click="addMessage()" ng-disabled="messageForm.$invalid">Lisää viesti</button>
 </form>

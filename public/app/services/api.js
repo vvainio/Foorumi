@@ -12,15 +12,15 @@ FoorumApp.service('Api', function ($http) {
 
   // Viestien Api-funktiot
   this.getMessage = function (id) {
-    // Hae annetulla id:llä varustettu viesti toteuttamasi Api:n polusta /messages/:id
+    return $http.get('/messages/' + id);
   };
   this.addMessage = function (message, topicId) {
-    // Lisää annettu viesti lähettämällä POST-pyyntö toteuttamasi Api:n polkuun /topics/:topicId/message
+    return $http.post('/topics/' + topicId + '/message', message);
   };
 
   // Vastausten Api-funktiot
   this.addReply = function (reply, messageId) {
-    // Lisää annettu vastaus lähettämällä POST-pyyntö toteuttamasi Api:n polkuun /messages/:messageId/reply
+    return $http.post('/messages/' + messageId + '/reply', reply);
   };
 
   // Käyttäjän Api-funktiot

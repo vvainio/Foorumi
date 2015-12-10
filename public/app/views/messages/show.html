@@ -1,24 +1,30 @@
 <div class="page-header">
-  <h1>Viestin otsikko tähän</h1>
+  <h1>{{message.title}}</h1>
 </div>
 
 <p>
-  Viestin sisältö tähän
+  {{message.content}}
 </p>
 
-<h2>1 vastaus</h2>
+<h2>
+  <ng-pluralize count="message.Replies.length"
+                when="{'0': 'Ei vastauksia',
+                       'one': '1 vastaus',
+                       'other': '{} vastausta'}">
+  </ng-pluralize>
+</h2>
 
 <ul class="media-list">
-  <li class="media">
+  <li class="media" ng-repeat="reply in message.Replies">
     <div class="media-body">
       <h4 class="media-heading">Käyttäjätunnus tähän</h4>
 
       <p>
-        Vastauksen sisältö tähän
+        {{reply.content}}
       </p>
 
       <p class="text-muted">
-        1.1.2015 12:00
+        {{reply.createdAt | date: 'MM.dd.yyyy HH:mm' }}
       </p>
     </div>
   </li>
@@ -26,11 +32,11 @@
 
 <h2>Lisää oma vastauksesi</h2>
 
-<form>
+<form name="replyForm">
   <div class="form-group">
     <label>Vastaus</label>
-    <textarea class="form-control"></textarea>
+    <textarea class="form-control" ng-model="newReply.content" required></textarea>
   </div>
 
-  <button class="btn btn-success">Lisää vastaus</button>
+  <button class="btn btn-success" ng-click="addReply()" ng-disabled="replyForm.$invalid">Lisää vastaus</button>
 </form>
