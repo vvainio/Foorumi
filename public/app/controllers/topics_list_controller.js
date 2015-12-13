@@ -1,4 +1,6 @@
 FoorumApp.controller('TopicsListController', function ($scope, $location, Api) {
+  $scope.newTopic = {};
+
   Api.getTopics().success(function (topics) {
     $scope.topics = topics;
   });

@@ -1,4 +1,6 @@
 FoorumApp.controller('ShowMessageController', function ($scope, $routeParams, Api) {
+  $scope.newReply = {};
+
   Api.getMessage($routeParams.id).success(function (message) {
     $scope.message = message;
   });
@@ -7,7 +9,8 @@ FoorumApp.controller('ShowMessageController', function ($scope, $routeParams, Ap
     Api.addReply({
       content: $scope.newReply.content,
     }, $routeParams.id).success(function (reply) {
-      $scope.newReply.content = "";
+      $scope.newReply = {};
+      reply.User = $scope.userLoggedIn;
       $scope.message.Replies.push(reply);
     });
   };

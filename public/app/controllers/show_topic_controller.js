@@ -1,4 +1,6 @@
 FoorumApp.controller('ShowTopicController', function ($scope, $routeParams, $location, Api) {
+  $scope.newMessage = {};
+
   Api.getTopic($routeParams.id).success(function (topic) {
     $scope.topic = topic;
   });
@@ -8,8 +10,8 @@ FoorumApp.controller('ShowTopicController', function ($scope, $routeParams, $loc
       title: $scope.newMessage.title,
       content: $scope.newMessage.content
     }, $routeParams.id).success(function (message) {
-      $scope.newMessage.title = "";
-      $scope.newMessage.content = "";
+      $scope.newMessage = {};
+      message.User = $scope.userLoggedIn;
       $scope.topic.Messages.push(message);
     });
   };

@@ -17,26 +17,28 @@
 <ul class="media-list">
   <li class="media" ng-repeat="reply in message.Replies">
     <div class="media-body">
-      <h4 class="media-heading">Käyttäjätunnus tähän</h4>
+      <h4 class="media-heading">{{reply.User.username}}</h4>
 
       <p>
         {{reply.content}}
       </p>
 
       <p class="text-muted">
-        {{reply.createdAt | date: 'MM.dd.yyyy HH:mm' }}
+        {{reply.createdAt | date: 'dd.MM.yyyy HH:mm' }}
       </p>
     </div>
   </li>
 </ul>
 
-<h2>Lisää oma vastauksesi</h2>
+<div ng-if="userLoggedIn">
+  <h2>Lisää oma vastauksesi</h2>
 
-<form name="replyForm">
-  <div class="form-group">
-    <label>Vastaus</label>
-    <textarea class="form-control" ng-model="newReply.content" required></textarea>
-  </div>
+  <form name="replyForm">
+    <div class="form-group">
+      <label>Vastaus</label>
+      <textarea class="form-control" ng-model="newReply.content" required></textarea>
+    </div>
 
-  <button class="btn btn-success" ng-click="addReply()" ng-disabled="replyForm.$invalid">Lisää vastaus</button>
-</form>
+    <button class="btn btn-success" ng-click="addReply()" ng-disabled="replyForm.$invalid">Lisää vastaus</button>
+  </form>
+</div>
